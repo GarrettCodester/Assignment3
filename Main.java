@@ -1,19 +1,19 @@
 /* WORD LADDER Main.java
  * EE422C Project 3 submission by
- * Grant Uy
- * gau84
- * 16480
+ * Replace <...> with your actual data.
+ * <Student1 Name>
+ * <Student1 EID>
+ * <Student1 5-digit Unique No.>
  * Garrett Custer
  * gsc535
  * 16475
- * Slip days used: 0
+ * Slip days used: <0>
  * Git URL: https://github.com/GarrettCodester/assignment3
  * Fall 2016
  */
 
 
 package assignment3;
-import java.util.*;
 import java.io.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,26 +55,18 @@ public class Main {
 	 * If command is /quit, return empty ArrayList. 
 	 */
 	public static ArrayList<String> parse(Scanner keyboard) {
-        ArrayList<String> result = new ArrayList<>();
-
-        Matcher matcher;
-        do {
-            String line = keyboard.nextLine();
-            Pattern pattern = Pattern.compile("(?s).*?(\\w+)\\s+(\\w+).*?");
-            matcher = pattern.matcher(line);
-        } while (!matcher.find());
-        result.add(matcher.group(1));
-        result.add(matcher.group(2));
-
-        /*
-        String first = keyboard.next();
-        if (first.toLowerCase().equals("/quit"))
-            System.exit(0);
-        String second = keyboard.next();
-        result.add(first);
-        result.add(second);
-        */
-		return result;
+		ArrayList<String> words = new ArrayList<String>();
+		words = new ArrayList<String>();
+			while(words.size() < 2){	//allows user to input both words on same line OR one word each line
+				String[] input = keyboard.nextLine().split("\\s+");  //splits input by whitespace
+				if((input.length == 1) && (input[0].equals("/quit"))){  //checks for input "/quit"
+					return new ArrayList<String>();
+				}
+				for (int i = 0; i < input.length; ++i){			//updates word ArrayList
+					if (!(input[i].matches("^\\s*$"))){ words.add(input[i]);}
+				}
+			}
+		return words;
 	}
 	
 	/**
@@ -153,7 +145,7 @@ public class Main {
 	}
     
 	public static Set<String>  makeDictionary () {
-		Set<String> words = new HashSet<>();
+		Set<String> words = new HashSet<String>();
 		Scanner infile = null;
 		try {
 			infile = new Scanner (new File("five_letter_words.txt"));
@@ -168,12 +160,12 @@ public class Main {
 		return words;
 	}
 	
-	public static void printLadder(ArrayList<String> ladder) { //if no PrintStream is specified
+	public static void printLadder(ArrayList<String> ladder) { 
 	    printLadder(ladder, System.out);
 	}
 
 	private static void printLadder(ArrayList<String> ladder, PrintStream ps) {
-        ladder.stream().map(String::toLowerCase).forEachOrdered(ps::println); //prints each word with PrintStream
+        ladder.stream().map(String::toLowerCase).forEachOrdered(ps::println);
     }
 	// TODO
 	// Other private static methods here
