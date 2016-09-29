@@ -1,13 +1,12 @@
 /* WORD LADDER Main.java
  * EE422C Project 3 submission by
- * Replace <...> with your actual data.
- * <Student1 Name>
- * <Student1 EID>
- * <Student1 5-digit Unique No.>
+ * Grant Uy
+ * gau84
+ * 16480
  * Garrett Custer
  * gsc535
  * 16475
- * Slip days used: <0>
+ * Slip days used: 0
  * Git URL: https://github.com/GarrettCodester/assignment3
  * Fall 2016
  */
@@ -117,17 +116,44 @@ public class Main {
         return new ArrayList<>();
     }
 	
+    /**
+	 * Breadth First Search
+	 * @param String start - first word for ladder
+	 * @param String end - second word for ladder
+	 * @return ArrayList of Strings containing every word in ladder in reverse order
+	 * if there is no word ladder between start and end, return empty ArrayList
+	 */
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
-		
-		// TODO some code
-		Set<String> dict = makeDictionary();
-		// TODO more code
-		
-		return null; // replace this line later with real return
+        Queue<ArrayList<String>> q = new LinkedList<>();
+        Set<String> visitedSet = new HashSet<>();
+        visitedSet.add(start);
+        ArrayList<String> initList = new ArrayList<>();
+        initList.add(start);
+        q.add(initList);
+
+        ArrayList<String> cur;
+        while (!q.isEmpty()) {
+            cur = q.poll();
+            String last = cur.get(cur.size()-1);
+            if (last.equals(end))
+                return cur;
+            visitedSet.add(last);
+            for (int i=0; i<start.length(); i++) {
+                for (char c : letters) {
+                    String newString = last.substring(0, i) + c + last.substring(i + 1);
+                    if (!visitedSet.contains(newString) && dict.contains(newString)) {
+                        ArrayList<String> copy = new ArrayList<>(cur);
+                        copy.add(newString);
+                        q.add(copy);
+                    }
+                }
+            }
+        }
+        return new ArrayList<>();
 	}
     
 	public static Set<String>  makeDictionary () {
-		Set<String> words = new HashSet<String>();
+		Set<String> words = new HashSet<>();
 		Scanner infile = null;
 		try {
 			infile = new Scanner (new File("five_letter_words.txt"));
