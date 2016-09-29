@@ -4,11 +4,11 @@
  * <Student1 Name>
  * <Student1 EID>
  * <Student1 5-digit Unique No.>
- * <Student2 Name>
- * <Student2 EID>
- * <Student2 5-digit Unique No.>
+ * Garrett Custer
+ * gsc535
+ * 16475
  * Slip days used: <0>
- * Git URL:
+ * Git URL: https://github.com/GarrettCodester/assignment3
  * Fall 2016
  */
 
@@ -78,16 +78,44 @@ public class Main {
 		return result;
 	}
 	
-	public static ArrayList<String> getWordLadderDFS(String start, String end) {
-		
-		// Returned list should be ordered start to end.  Include start and end.
-		// Return empty list if no ladder.
-		// TODO some code
-		Set<String> dict = makeDictionary();
-		// TODO more code
-		
-		return null; // replace this line later with real return
-	}
+	/**
+	 * Depth First Search
+	 * @param String start - first word for ladder
+	 * @param String end - second word for ladder
+	 * @param Set<String> visitedSet - Set containing every word in dictionary that has already been passed
+	 * @return ArrayList of Strings containing every word in ladder in reverse order
+	 * if there is no word ladder between start and end, return empty ArrayList
+	 */
+	public static ArrayList<String> getWordLadderDFS(String start, String end) { //for initial call, no visitedSet
+        return getWordLadderDFS(start, end, new HashSet<>());
+    }
+
+    public static ArrayList<String> getWordLadderDFS(String start, String end, Set<String> visitedSet) {
+        visitedSet.add(start);
+
+        if (start.equals(end)) {	//check for end of ladder
+            ArrayList<String> result = new ArrayList<>();
+            result.add(end);
+            return result;
+        }
+
+        for (int i=0; i<start.length(); i++) {
+            for (char c : letters) {
+                String newString = start.substring(0,i) + c + start.substring(i+1); //changes word by 1 letter
+                if (visitedSet.contains(newString))	//has the word been visited already?
+                    continue;
+                if (!dict.contains(newString))		//is the word in the dictionary?
+                    continue;
+                ArrayList<String> result = getWordLadderDFS(newString, end, visitedSet); //repeat with new String
+                if (result.size() > 0) { //if result.size() = 0, no ladder exists
+                    result.add(0,start);
+                    return result;
+                }
+            }
+        }
+
+        return new ArrayList<>();
+    }
 	
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
 		
