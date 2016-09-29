@@ -3,10 +3,23 @@ package assignment3;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.junit.Test;
 
 public class MainTest {
+
+	private boolean containsDuplicates(ArrayList<String> ladder) {
+		// keep track of all the words we've passed so far
+		HashSet<String> seen = new HashSet<>();
+		// add each word to the set, returning true if we encounter one we've seen before
+		for (String word : ladder) {
+			if (seen.contains(word))
+				return true;
+			seen.add(word);
+		}
+		return false;
+	}
 	
 	@Test
 	public void Basic_BFS() {
@@ -15,14 +28,8 @@ public class MainTest {
 		if(!(ladder.get(0).equals("STONE")) || !(ladder.get(ladder.size() - 1)).equals("MONEY")){
 			fail("Incorrect ladder");
 		}
-		for (int i = 0; i < ladder.size(); i++){
-			for (int j = 0; j < ladder.size(); j++){
-				if((ladder.get(i) == ladder.get(j)) && (i != j)){
-					fail("Duplicate words in ladder");
-					return;
-				}
-			}
-		}
+		if (containsDuplicates(ladder))
+			fail("Duplicate words in ladder");
 		System.out.println("pass");
 	}
 	
@@ -34,14 +41,8 @@ public class MainTest {
 			fail("Incorrect ladder");
 		}
 		Main.printLadder(ladder);
-		for (int i = 0; i < ladder.size(); i++){
-			for (int j = 0; j < ladder.size(); j++){
-				if((ladder.get(i) == ladder.get(j)) && (i != j)){
-					fail("Duplicate words in ladder");
-					return;
-				}
-			}
-		}
+		if (containsDuplicates(ladder))
+			fail("Duplicate words in ladder");
 		System.out.println("pass");
 	}
 	
@@ -52,14 +53,8 @@ public class MainTest {
 		if(!(ladder.get(0).equals("DRILL")) || !(ladder.get(ladder.size() - 1)).equals("HOUSE")){
 			fail("Incorrect ladder");
 		}
-		for (int i = 0; i < ladder.size(); i++){
-			for (int j = 0; j < ladder.size(); j++){
-				if((ladder.get(i) == ladder.get(j)) && (i != j)){
-					fail("Duplicate words in ladder");
-					return;
-				}
-			}
-		}
+		if (containsDuplicates(ladder))
+			fail("Duplicate words in ladder");
 		System.out.println("pass");
 	}
 	
@@ -71,14 +66,8 @@ public class MainTest {
 			fail("Incorrect ladder");
 		}
 		Main.printLadder(ladder);
-		for (int i = 0; i < ladder.size(); i++){
-			for (int j = 0; j < ladder.size(); j++){
-				if((ladder.get(i) == ladder.get(j)) && (i != j)){
-					fail("Duplicate words in ladder");
-					return;
-				}
-			}
-		}
+		if (containsDuplicates(ladder))
+			fail("Duplicate words in ladder");
 		System.out.println("pass");
 	}
 	
@@ -90,14 +79,8 @@ public class MainTest {
 		if(ladder.size() > 0){
 			fail("Incorrect ladder");
 		}
-		for (int i = 0; i < ladder.size(); i++){
-			for (int j = 0; j < ladder.size(); j++){
-				if((ladder.get(i) == ladder.get(j)) && (i != j)){
-					fail("Duplicate words in ladder");
-					return;
-				}
-			}
-		}
+		if (containsDuplicates(ladder))
+			fail("Duplicate words in ladder");
 		System.out.println("pass");
 	}
 	
@@ -109,14 +92,8 @@ public class MainTest {
 		if(ladder.size() > 0){
 			fail("Incorrect ladder");
 		}
-		for (int i = 0; i < ladder.size(); i++){
-			for (int j = 0; j < ladder.size(); j++){
-				if((ladder.get(i) == ladder.get(j)) && (i != j)){
-					fail("Duplicate words in ladder");
-					return;
-				}
-			}
-		}
+		if (containsDuplicates(ladder))
+			fail("Duplicate words in ladder");
 		System.out.println("pass");
 	}
 	
@@ -127,14 +104,8 @@ public class MainTest {
 		if(!(ladder.get(0).equals("HOUSE")) || !(ladder.get(ladder.size() - 1)).equals("DRILL")){
 			fail("Incorrect ladder");
 		}
-		for (int i = 0; i < ladder.size(); i++){
-			for (int j = 0; j < ladder.size(); j++){
-				if((ladder.get(i) == ladder.get(j)) && (i != j)){
-					fail("Duplicate words in ladder");
-					return;
-				}
-			}
-		}
+		if (containsDuplicates(ladder))
+			fail("Duplicate words in ladder");
 		System.out.println("pass");
 	}
 	
@@ -146,14 +117,8 @@ public class MainTest {
 			fail("Incorrect ladder");
 		}
 		Main.printLadder(ladder);
-		for (int i = 0; i < ladder.size(); i++){
-			for (int j = 0; j < ladder.size(); j++){
-				if((ladder.get(i) == ladder.get(j)) && (i != j)){
-					fail("Duplicate words in ladder");
-					return;
-				}
-			}
-		}
+		if (containsDuplicates(ladder))
+			fail("Duplicate words in ladder");
 		System.out.println("pass");
 	}
 	
@@ -165,14 +130,8 @@ public class MainTest {
 		if(ladder.size() > 0){
 			fail("Incorrect ladder");
 		}
-		for (int i = 0; i < ladder.size(); i++){
-			for (int j = 0; j < ladder.size(); j++){
-				if((ladder.get(i) == ladder.get(j)) && (i != j)){
-					fail("Duplicate words in ladder");
-					return;
-				}
-			}
-		}
+		if (containsDuplicates(ladder))
+			fail("Duplicate words in ladder");
 		System.out.println("pass");
 	}
 	
@@ -184,14 +143,8 @@ public class MainTest {
 		if(ladder.size() > 0){
 			fail("Incorrect ladder");
 		}
-		for (int i = 0; i < ladder.size(); i++){
-			for (int j = 0; j < ladder.size(); j++){
-				if((ladder.get(i) == ladder.get(j)) && (i != j)){
-					fail("Duplicate words in ladder");
-					return;
-				}
-			}
-		}
+		if (containsDuplicates(ladder))
+			fail("Duplicate words in ladder");
 		System.out.println("pass");
 	}
 }

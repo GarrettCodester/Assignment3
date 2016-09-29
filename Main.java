@@ -1,13 +1,12 @@
 /* WORD LADDER Main.java
  * EE422C Project 3 submission by
- * Replace <...> with your actual data.
- * <Student1 Name>
- * <Student1 EID>
- * <Student1 5-digit Unique No.>
+ * Grant Uy
+ * gau84
+ * 16480
  * Garrett Custer
  * gsc535
  * 16475
- * Slip days used: <0>
+ * Slip days used: 0
  * Git URL: https://github.com/GarrettCodester/assignment3
  * Fall 2016
  */
@@ -15,8 +14,7 @@
 
 package assignment3;
 import java.io.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
 
 public class Main {
 	
@@ -55,33 +53,32 @@ public class Main {
 	 * If command is /quit, return empty ArrayList. 
 	 */
 	public static ArrayList<String> parse(Scanner keyboard) {
-		ArrayList<String> words = new ArrayList<String>();
-		words = new ArrayList<String>();
-			while(words.size() < 2){	//allows user to input both words on same line OR one word each line
-				String[] input = keyboard.nextLine().split("\\s+");  //splits input by whitespace
-				if((input.length == 1) && (input[0].equals("/quit"))){  //checks for input "/quit"
-					return new ArrayList<String>();
-				}
-				for (int i = 0; i < input.length; ++i){			//updates word ArrayList
-					if (!(input[i].matches("^\\s*$"))){ words.add(input[i]);}
-				}
+		ArrayList<String> words = new ArrayList<>();
+		while(words.size() < 2){	//allows user to input both words on same line OR one word each line
+			String[] input = keyboard.nextLine().split("\\s+");  //splits input by whitespace
+			if((input.length == 1) && (input[0].equals("/quit"))){  //checks for input "/quit"
+				return new ArrayList<>();
 			}
+			for (int i = 0; i < input.length; ++i){			//updates word ArrayList
+				if (!(input[i].matches("^\\s*$"))){ words.add(input[i]);}
+			}
+		}
 		return words;
 	}
-	
-	/**
-	 * Depth First Search
-	 * @param String start - first word for ladder
-	 * @param String end - second word for ladder
-	 * @param Set<String> visitedSet - Set containing every word in dictionary that has already been passed
-	 * @return ArrayList of Strings containing every word in ladder in reverse order
-	 * if there is no word ladder between start and end, return empty ArrayList
-	 */
+
 	public static ArrayList<String> getWordLadderDFS(String start, String end) { //for initial call, no visitedSet
         return getWordLadderDFS(start, end, new HashSet<>());
     }
 
-    public static ArrayList<String> getWordLadderDFS(String start, String end, Set<String> visitedSet) {
+	/**
+	 * Depth First Search
+	 * @param start - first word for ladder
+	 * @param end - second word for ladder
+	 * @param visitedSet - Set containing every word in dictionary that has already been passed
+	 * @return ArrayList of Strings containing every word in ladder in reverse order
+	 * if there is no word ladder between start and end, return empty ArrayList
+	 */
+    private static ArrayList<String> getWordLadderDFS(String start, String end, Set<String> visitedSet) {
         visitedSet.add(start);
 
         if (start.equals(end)) {	//check for end of ladder
@@ -98,7 +95,7 @@ public class Main {
                 if (!dict.contains(newString))		//is the word in the dictionary?
                     continue;
                 ArrayList<String> result = getWordLadderDFS(newString, end, visitedSet); //repeat with new String
-                if (result.size() > 0) { //if result.size() = 0, no ladder exists
+                if (result.size() > 0) { //if result.size() > 0, bubble up (we've found end)
                     result.add(0,start);
                     return result;
                 }
@@ -110,8 +107,8 @@ public class Main {
 	
     /**
 	 * Breadth First Search
-	 * @param String start - first word for ladder
-	 * @param String end - second word for ladder
+	 * @param start - first word for ladder
+	 * @param end - second word for ladder
 	 * @return ArrayList of Strings containing every word in ladder in reverse order
 	 * if there is no word ladder between start and end, return empty ArrayList
 	 */
