@@ -16,10 +16,13 @@
 package assignment3;
 import java.util.*;
 import java.io.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
 	
-	// static variables and constants only here.
+	private static List<Character> letters;
+    private static Set<String> dict;
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -53,8 +56,26 @@ public class Main {
 	 * If command is /quit, return empty ArrayList. 
 	 */
 	public static ArrayList<String> parse(Scanner keyboard) {
-		// TO DO
-		return null;
+        ArrayList<String> result = new ArrayList<>();
+
+        Matcher matcher;
+        do {
+            String line = keyboard.nextLine();
+            Pattern pattern = Pattern.compile("(?s).*?(\\w+)\\s+(\\w+).*?");
+            matcher = pattern.matcher(line);
+        } while (!matcher.find());
+        result.add(matcher.group(1));
+        result.add(matcher.group(2));
+
+        /*
+        String first = keyboard.next();
+        if (first.toLowerCase().equals("/quit"))
+            System.exit(0);
+        String second = keyboard.next();
+        result.add(first);
+        result.add(second);
+        */
+		return result;
 	}
 	
 	public static ArrayList<String> getWordLadderDFS(String start, String end) {
