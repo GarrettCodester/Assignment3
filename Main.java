@@ -14,15 +14,14 @@
 package assignment3;
 import java.io.*;
 import java.util.*;
-import java.util.function.BiFunction;
 
 public class Main {
-	
+
 	private static List<Character> letters;
     private static Set<String> dict;
-	
+    private static Set<String> visitedSet;
+
 	public static void main(String[] args) throws Exception {
-		
 		Scanner kb;	// input Scanner for commands
 		PrintStream ps;	// output file
 		// If arguments are specified, read/write from/to files instead of Std IO.
@@ -48,18 +47,18 @@ public class Main {
             }
         }
 	}
-	
+
 	public static void initialize() {
 		letters = new ArrayList<>();
 		for (int i=(int)'A'; i <= (int)'Z'; i++)
 			letters.add((char)i);
         dict = makeDictionary();
 	}
-	
+
 	/**
 	 * @param keyboard Scanner connected to System.in
-	 * @return ArrayList of 2 Strings containing start word and end word. 
-	 * If command is /quit, return empty ArrayList. 
+	 * @return ArrayList of 2 Strings containing start word and end word.
+	 * If command is /quit, return empty ArrayList.
 	 */
 	public static ArrayList<String> parse(Scanner keyboard) {
 		ArrayList<String> words = new ArrayList<>();
@@ -76,18 +75,18 @@ public class Main {
 	}
 
 	public static ArrayList<String> getWordLadderDFS(String start, String end) { //for initial call, no visitedSet
-        return getWordLadderDFS(start, end, new HashSet<>());
+        visitedSet = new HashSet<>();
+        return DFSHelperFunction(start, end);
     }
 
 	/**
 	 * Depth First Search
 	 * @param start - first word for ladder
 	 * @param end - second word for ladder
-	 * @param visitedSet - Set containing every word in dictionary that has already been passed
 	 * @return ArrayList of Strings containing every word in ladder in reverse order
 	 * if there is no word ladder between start and end, return empty ArrayList
 	 */
-    private static ArrayList<String> getWordLadderDFS(String start, String end, Set<String> visitedSet) {
+    private static ArrayList<String> DFSHelperFunction(String start, String end) {
         // check for end of ladder
         if (start.equals(end)) {
             ArrayList<String> result = new ArrayList<>();
@@ -96,17 +95,12 @@ public class Main {
         }
         // mark this word as visited
         visitedSet.add(start);
-        // define lambda function for checking an edge, given an index and a new character
-        // while it looks complicated, we're really just efficiently reusing this code instead of copy/pasting
-        BiFunction<Integer,Character,ArrayList<String>> checkEdge = (i, c) -> {
-            String newString = start.substring(0,i) + c + start.substring(i+1);
-            if (visitedSet.contains(newString) || !dict.contains(newString))	//is the word valid?
-                return new ArrayList<>();
-            return getWordLadderDFS(newString, end, visitedSet);
-        };
         // optimization: first try to swap to the correct characters in "end"
         for (int i=0; i<start.length(); i++) {
-            ArrayList<String> result = checkEdge.apply(i, end.charAt(i));
+            String newString = start.substring(0,i) + end.charAt(i) + start.substring(i+1);
+            if (visitedSet.contains(newString) || !dict.contains(newString))	//is the word valid?
+                continue;
+            ArrayList<String> result = DFSHelperFunction(newString, end); // recurse
             if (result.size() > 0) { //if result.size() > 0, bubble up (we've found end)
                 result.add(0,start);
                 return result;
@@ -116,7 +110,10 @@ public class Main {
         for (int i=0; i<start.length(); i++) {
             // otherwise, traverse normally
             for (char c : letters) {
-                ArrayList<String> result = checkEdge.apply(i, c);
+                String newString = start.substring(0,i) + c + start.substring(i+1);
+                if (visitedSet.contains(newString) || !dict.contains(newString))	//is the word valid?
+                    continue;
+                ArrayList<String> result = DFSHelperFunction(newString, end); // recurse
                 if (result.size() > 0) { //if result.size() > 0, bubble up (we've found end)
                     result.add(0,start);
                     return result;
@@ -126,7 +123,7 @@ public class Main {
         // if we're here, we didn't find a ladder
         return new ArrayList<>();
     }
-	
+
     /**
 	 * Breadth First Search
 	 * @param start - first word for ladder
@@ -135,34 +132,41 @@ public class Main {
 	 * if there is no word ladder between start and end, return empty ArrayList
 	 */
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
-        Queue<ArrayList<String>> q = new LinkedList<>();
+        // initialize the queue for processing words and the set for marking them as visited
+        // we're saving the entire ladder in the queue so that we have a running history of words,
+        // which obviates the need for backtracking.
+        Queue<ArrayList<String>> queue = new LinkedList<>();
         Set<String> visitedSet = new HashSet<>();
-        visitedSet.add(start);
-        ArrayList<String> initList = new ArrayList<>();
-        initList.add(start);
-        q.add(initList);
-
-        ArrayList<String> cur;
-        while (!q.isEmpty()) {
-            cur = q.poll();
-            String last = cur.get(cur.size()-1);
+        ArrayList<String> initialList = new ArrayList<>();
+        initialList.add(start);
+        queue.add(initialList);
+        // process the queue, adding "children" to the end as we go along
+        ArrayList<String> currentLadder;
+        while (!queue.isEmpty()) {
+            currentLadder = queue.poll(); // pull first ladder, removing from the queue
+            String last = currentLadder.get(currentLadder.size()-1); // we only care about the most recent element in the ladder
+            // have we found the end yet?
             if (last.equals(end))
-                return cur;
+                return currentLadder;
+            // if not, mark the set as visited
             visitedSet.add(last);
+            // add all possible (valid) children to the queue
             for (int i=0; i<start.length(); i++) {
                 for (char c : letters) {
                     String newString = last.substring(0, i) + c + last.substring(i + 1);
                     if (!visitedSet.contains(newString) && dict.contains(newString)) {
-                        ArrayList<String> copy = new ArrayList<>(cur);
-                        copy.add(newString);
-                        q.add(copy);
+                        // creating a copy of the ladder to prevent scope/reference issues
+                        ArrayList<String> ladderCopy = new ArrayList<>(currentLadder);
+                        ladderCopy.add(newString);
+                        queue.add(ladderCopy);
                     }
                 }
             }
         }
+        // if we're here, there was no valid ladder (ran out of children to process)
         return new ArrayList<>();
 	}
-    
+
 	public static Set<String> makeDictionary () {
 		Set<String> words = new HashSet<>();
 		Scanner infile = null;
@@ -178,12 +182,13 @@ public class Main {
 		}
 		return words;
 	}
-	
-	public static void printLadder(ArrayList<String> ladder) { 
+
+	public static void printLadder(ArrayList<String> ladder) {
 	    printLadder(ladder, System.out);
 	}
 
 	private static void printLadder(ArrayList<String> ladder, PrintStream ps) {
+	    // self-explanatory stream: convert to lowercase and print
         ladder.stream().map(String::toLowerCase).forEachOrdered(ps::println);
     }
 }
