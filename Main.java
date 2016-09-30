@@ -14,6 +14,7 @@
 package assignment3;
 import java.io.*;
 import java.util.*;
+import java.util.function.BiFunction;
 
 public class Main {
 	
@@ -36,7 +37,7 @@ public class Main {
         initialize();
         while (true) {
             ArrayList<String> startEnd = parse(kb);
-            ArrayList<String> ladder = getWordLadderDFS(startEnd.get(0).toUpperCase(), startEnd.get(1).toUpperCase());
+            ArrayList<String> ladder = getWordLadderDFS(startEnd.get(0), startEnd.get(1));
             if (ladder.isEmpty()) {
                 System.out.printf("no word ladder can be found between %s and %s.\n",
                         startEnd.get(0).toLowerCase(), startEnd.get(1).toLowerCase());
@@ -49,11 +50,10 @@ public class Main {
 	}
 	
 	public static void initialize() {
-		letters = new ArrayList<>();		//reset letter list
-		for (int i=(int)'A'; i <= (int)'Z'; i++ ) {
+		letters = new ArrayList<>();
+		for (int i=(int)'A'; i <= (int)'Z'; i++)
 			letters.add((char)i);
-		}
-        dict = makeDictionary();			//reset dictionary
+        dict = makeDictionary();
 	}
 	
 	/**
@@ -88,29 +88,42 @@ public class Main {
 	 * if there is no word ladder between start and end, return empty ArrayList
 	 */
     private static ArrayList<String> getWordLadderDFS(String start, String end, Set<String> visitedSet) {
-        visitedSet.add(start);
-
-        if (start.equals(end)) {	//check for end of ladder
+        // check for end of ladder
+        if (start.equals(end)) {
             ArrayList<String> result = new ArrayList<>();
             result.add(end);
             return result;
         }
-
+        // mark this word as visited
+        visitedSet.add(start);
+        // define lambda function for checking an edge, given an index and a new character
+        // while it looks complicated, we're really just efficiently reusing this code instead of copy/pasting
+        BiFunction<Integer,Character,ArrayList<String>> checkEdge = (i, c) -> {
+            String newString = start.substring(0,i) + c + start.substring(i+1);
+            if (visitedSet.contains(newString) || !dict.contains(newString))	//is the word valid?
+                return new ArrayList<>();
+            return getWordLadderDFS(newString, end, visitedSet);
+        };
+        // optimization: first try to swap to the correct characters in "end"
         for (int i=0; i<start.length(); i++) {
+            ArrayList<String> result = checkEdge.apply(i, end.charAt(i));
+            if (result.size() > 0) { //if result.size() > 0, bubble up (we've found end)
+                result.add(0,start);
+                return result;
+            }
+        }
+        // otherwise, fall back on checking the other combinations
+        for (int i=0; i<start.length(); i++) {
+            // otherwise, traverse normally
             for (char c : letters) {
-                String newString = start.substring(0,i) + c + start.substring(i+1); //changes word by 1 letter
-                if (visitedSet.contains(newString))	//has the word been visited already?
-                    continue;
-                if (!dict.contains(newString))		//is the word in the dictionary?
-                    continue;
-                ArrayList<String> result = getWordLadderDFS(newString, end, visitedSet); //repeat with new String
+                ArrayList<String> result = checkEdge.apply(i, c);
                 if (result.size() > 0) { //if result.size() > 0, bubble up (we've found end)
                     result.add(0,start);
                     return result;
                 }
             }
         }
-
+        // if we're here, we didn't find a ladder
         return new ArrayList<>();
     }
 	
@@ -150,7 +163,7 @@ public class Main {
         return new ArrayList<>();
 	}
     
-	public static Set<String>  makeDictionary () {
+	public static Set<String> makeDictionary () {
 		Set<String> words = new HashSet<>();
 		Scanner infile = null;
 		try {
