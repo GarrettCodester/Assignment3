@@ -11,7 +11,6 @@
  * Fall 2016
  */
 
-
 package assignment3;
 import java.io.*;
 import java.util.*;
@@ -34,9 +33,19 @@ public class Main {
 			kb = new Scanner(System.in);// default from Stdin
 			ps = System.out;			// default to Stdout
 		}
-		initialize();
-		
-		// TODO methods to read in words, output ladder
+        initialize();
+        while (true) {
+            ArrayList<String> startEnd = parse(kb);
+            ArrayList<String> ladder = getWordLadderDFS(startEnd.get(0).toUpperCase(), startEnd.get(1).toUpperCase());
+            if (ladder.isEmpty()) {
+                System.out.printf("no word ladder can be found between %s and %s.\n",
+                        startEnd.get(0).toLowerCase(), startEnd.get(1).toLowerCase());
+            } else {
+                System.out.printf("a %d-rung word ladder exists between %s and %s.\n",
+                        ladder.size()-2, startEnd.get(0).toLowerCase(), startEnd.get(1).toLowerCase());
+                printLadder(ladder, ps);
+            }
+        }
 	}
 	
 	public static void initialize() {
@@ -54,14 +63,14 @@ public class Main {
 	 */
 	public static ArrayList<String> parse(Scanner keyboard) {
 		ArrayList<String> words = new ArrayList<>();
-		while(words.size() < 2){	//allows user to input both words on same line OR one word each line
-			String[] input = keyboard.nextLine().split("\\s+");  //splits input by whitespace
-			if((input.length == 1) && (input[0].equals("/quit"))){  //checks for input "/quit"
-				return new ArrayList<>();
-			}
-			for (int i = 0; i < input.length; ++i){			//updates word ArrayList
-				if (!(input[i].matches("^\\s*$"))){ words.add(input[i]);}
-			}
+		while (words.size() < 2) {	//allows user to input both words on same line OR one word each line
+            String rawInput = keyboard.nextLine().toUpperCase();
+			String[] input = rawInput.split("\\s+");  //splits input by whitespace
+			if (rawInput.contains("/QUIT"))  //checks for input "/quit"
+				System.exit(0);
+			for (int i = 0; i < input.length; ++i)			//updates word ArrayList
+				if (!input[i].matches("^\\s*$"))
+				    words.add(input[i]);
 		}
 		return words;
 	}
@@ -142,7 +151,7 @@ public class Main {
 	}
     
 	public static Set<String>  makeDictionary () {
-		Set<String> words = new HashSet<String>();
+		Set<String> words = new HashSet<>();
 		Scanner infile = null;
 		try {
 			infile = new Scanner (new File("five_letter_words.txt"));
@@ -164,6 +173,4 @@ public class Main {
 	private static void printLadder(ArrayList<String> ladder, PrintStream ps) {
         ladder.stream().map(String::toLowerCase).forEachOrdered(ps::println);
     }
-	// TODO
-	// Other private static methods here
 }
